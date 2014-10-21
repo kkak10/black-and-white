@@ -1,13 +1,16 @@
 /**
  * Created by juno on 2014-10-21.
  */
+
 var blackAndWhite = angular.module("blackAndWhite",[]);
 
-blackAndWhite.directive('box-bg',function(){
-    return function(scope,el,attrs){
-
+blackAndWhite.directive('game-ui',function(){
+    return {
+        restrict : "E",
+        template:"<h1>test</h1>"
     }
 })
+
 blackAndWhite.controller("container",function($scope){
     $scope.init = function(){
         $scope.A = {
