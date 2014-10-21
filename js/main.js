@@ -54,6 +54,11 @@ blackAndWhite.controller("container",function($scope){
     }
 
     $scope.betting = function(user,minuse){
+        if(!(user.score - minuse >= 0)){
+            alert("점수가 부족합니다.");
+            return false;
+        }
+
         user.score -= minuse;
         user.batting_score = minuse;
         user.batting = true;
@@ -62,16 +67,24 @@ blackAndWhite.controller("container",function($scope){
             if($scope.A.batting_score > $scope.B.batting_score){
                 alert("A승");
                 $scope.A.win += 1;
+
+                if($scope.A.win === 5){
+                    alert("A 승리!!");
+                }
             }else if($scope.A.batting_score < $scope.B.batting_score){
                 alert("B승")
                 $scope.B.win += 1;
+
+                if($scope.A.win === 5){
+                    alert("B 승리!!");
+                }
             }else{
                 alert("무승부")
             }
-            
+
             $scope.A.batting = false;
             $scope.B.batting = false;
-
         }
+
     }
 })
