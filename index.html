@@ -14,9 +14,8 @@
 <div style="margin-left: 10px;width: 200px" ng-controller="container" ng-init="init();">
     <!--
     http://www.nextree.co.kr/p4850/
-    A : {{A.score}}<input type="text" pattern="\d*" class="form-control" ng-model="A_minus" ng-change="blackAndWhite_box(A_minus,'A')" /><input type="button" class="btn" id="A_btn" ng-click="betting(A,A_minus)" value="배팅" /><span ng-bind="A_minus"></span> <div class="color_box" ng-class="{black:A.box_black}"></div>
-    B : {{B.score}}<input type="text" pattern="\d*" class="form-control" ng-model="B_minus" ng-change="blackAndWhite_box(B_minus,'B')"/><input type="button" class="btn" id="B_btn" ng-click="betting(B,B_minus)" value="배팅" /><span ng-bind="B_minus"></span> <div class="color_box" ng-class="{black:B.box_black}"></div>
     -->
+    <gameui></gameui>
 </div>
 </body>
 </html>

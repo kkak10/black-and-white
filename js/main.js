@@ -4,10 +4,13 @@
 
 var blackAndWhite = angular.module("blackAndWhite",[]);
 
-blackAndWhite.directive('game-ui',function(){
+blackAndWhite.directive('gameui',function(){
     return {
         restrict : "E",
-        template:"<h1>test</h1>"
+        link:function(scope,el,attr){
+
+        },
+        templateUrl:"directive/user.html"
     }
 })
 
@@ -57,6 +60,11 @@ blackAndWhite.controller("container",function($scope){
     }
 
     $scope.betting = function(user,minuse){
+        if(minuse === null || minuse === undefined || minuse === ""){
+            alert("배팅할 점수를 입력해주세요");
+            return false;
+        }
+
         if(!(user.score - minuse >= 0)){
             alert("점수가 부족합니다.");
             return false;
@@ -68,6 +76,8 @@ blackAndWhite.controller("container",function($scope){
 
         if($scope.A.batting && $scope.B.batting){
             if($scope.A.batting_score > $scope.B.batting_score){
+                console.log("A 배팅스코어 : " + $scope.A.batting_score)
+                console.log("B 배팅스코어 : " + $scope.B.batting_score)
                 alert("A승");
                 $scope.A.win += 1;
 
@@ -75,6 +85,8 @@ blackAndWhite.controller("container",function($scope){
                     alert("A 승리!!");
                 }
             }else if($scope.A.batting_score < $scope.B.batting_score){
+                console.log("A 배팅스코어 : " + $scope.A.batting_score)
+                console.log("B 배팅스코어 : " + $scope.B.batting_score)
                 alert("B승")
                 $scope.B.win += 1;
 
