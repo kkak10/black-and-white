@@ -35,3 +35,8 @@ $('body').scrollspy({
 $('.navbar-collapse ul li a').click(function() {
     $('.navbar-toggle:visible').click();
 });
+
+$("#game_manual_btn").click(function(event){
+    event.preventDefault();
+    $("#about").slideToggle();
+})
