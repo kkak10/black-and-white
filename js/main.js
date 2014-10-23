@@ -2,7 +2,19 @@
  * Created by juno on 2014-10-21.
  */
 
-var blackAndWhite = angular.module("blackAndWhite",[]);
+var blackAndWhite = angular.module("blackAndWhite",['ngRoute']);
+
+blackAndWhite.config(['$routeProvider',function($routeProvider){
+    $routeProvider.when('/',{
+     templateUrl : 'directive/index.html',
+     controller : 'indexController'
+     });
+
+    $routeProvider.when('/room/:roomId',{
+        templateUrl : 'directive/room.html',
+        controller : 'roomController'
+    });
+}])
 
 blackAndWhite.directive('gameui',function(){
     return {
@@ -12,7 +24,8 @@ blackAndWhite.directive('gameui',function(){
         },
         templateUrl:"directive/user.html"
     }
-})
+});
+
 
 blackAndWhite.controller("container",function($scope){
     $scope.init = function(){
@@ -29,6 +42,7 @@ blackAndWhite.controller("container",function($scope){
             box_black : false,
             batting : false,
             batting_score : 0,
+
             win : 0
         }
     }

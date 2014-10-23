@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="ko">
+    <meta charset="UTF-8">
+    <title>Black and White</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/base.css"/>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angularjs/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="js/main.js"></script>
+</head>
+<body ng-app="blackAndWhite">
+<div style="margin-left: 10px;width: 200px" ng-controller="container" ng-init="init();">
+    <!--
+    http://www.nextree.co.kr/p4850/
+    -->
+    <gameui></gameui>
+    <div ng-view></div>
+</div>
+</body>
+</html>
