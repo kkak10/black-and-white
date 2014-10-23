@@ -17,22 +17,22 @@ blackAndWhite.config(['$routeProvider',function($routeProvider){
 }])
 
 blackAndWhite.directive('gameui',function(){
-    return {
-        restrict : "E",
-        link:function(scope,el,attr){
+            return {
+                restrict : "E",
+                link:function(scope,el,attr){
 
-        },
-        templateUrl:"directive/user.html"
-    }
-});
+                },
+                templateUrl:"directive/user.html"
+            }
+        });
 
 
-blackAndWhite.controller("container",function($scope){
-    $scope.init = function(){
-        $scope.A = {
-            score : 99,
-            box_black : false,
-            batting : false,
+        blackAndWhite.controller("container",function($scope){
+            $scope.init = function(){
+                $scope.A = {
+                    score : 99,
+                    box_black : false,
+                    batting : false,
             batting_score : 0,
             win : 0
         }
