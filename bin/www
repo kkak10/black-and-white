@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+var debug = require('debug')('blackAndWhite');
+var app = require('../app');
+
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
+});
+
+var io = require('socket.io').listen(server);
+
+io.set('log level',2);
+var roomNum = 0;
+//소켓 서버 이벤트를 연결합니다.
+io.on('connection',function(socket){
+    console.log("연결 완료!")
+
+    socket.on("access",function(){
+        console.log("access");
+        var rooms = io.sockets.adapter.rooms;
+        socket.emit("room_update",rooms);
+    });
+
+    socket.on("makeRoom",function(){
+        console.log("makeRoom Start!")
+        roomNum++;
+        var roomName = "room_" + roomNum;
+        socket.join(roomName);
+        var rooms = io.sockets.adapter.rooms;
+        console.dir("방 목록1 : " + rooms);
+        //socket.broadcast.emit("roomListUpdate",rooms);
+        socket.emit("makeRoom",{
+            "roomNum" : roomNum
+        })
+
+        io.sockets.emit("room_update",rooms);
+        //var rooms = io.sockets.manager.rooms;
+        ///console.log("방 목록1 : " + rooms);
+        //socket.emit("makeRoom",rooms);
+    })
+
+    socket.on("gameStart",function(){
+
+    })
+
+    socket.on("join_room",function(room_name){
+        console.log("join room");
+        console.log(room_name)
+        socket.join(room_name);
+        var rooms = io.sockets.adapter.rooms;
+        //socket.broadcast.to(room_name).emit('join_room', rooms.room_name)
+        io.sockets.in(room_name).emit('join_room',rooms);
+    })
+});
+
+//socket 서버에서 나감
+io.sockets.on('disconnect',function(){
+    console.log("Client out");
+});
