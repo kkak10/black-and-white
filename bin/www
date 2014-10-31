@@ -13,9 +13,16 @@ var io = require('socket.io').listen(server);
 io.set('log level',2);
 var roomNum = 0;
 var roomList = {};
+var userList = {}
 function trunChanger(roomName){
-    for(socketid in  roomList[roomName + "userList"]){
-        console.log(socketid);
+    for(idx in  roomList[roomName + "userList"]){
+        if(roomList[roomName + roomList[roomName + "userList"][idx]].turn){
+            roomList[roomName + roomList[roomName + "userList"][idx]].turn = false;
+            socket.broadcast.to(roomList[roomName + "userList"][idx]).emit('noTurn',);
+        }else{
+            roomList[roomName + roomList[roomName + "userList"][idx]].turn = true;
+            socket.broadcast.to(roomList[roomName + "userList"][idx]).emit('isTurn',);
+        }
     }
 }
 
@@ -34,6 +41,7 @@ io.on('connection',function(socket){
         console.log("makeRoom Start!")
         roomNum++;
         var roomName = "room_" + roomNum;
+            userList[socket.id] = roomName;
             roomList[roomName + "userList"] = [];
             roomList[roomName + "userList"].push(socket.id);
             roomList[roomName + "master"] = socket.id;
@@ -66,14 +74,20 @@ io.on('connection',function(socket){
 
     socket.on("betting",function(data){
         console.log("배팅 스코어 : " + data.bettingScore);
+        var roomName = userList[socket.id];
+        roomList[roomName + socket.id].battingScore = data.bettingScore;
+        trunChanger(roomName);
+
     })
 
     socket.on("join_room",function(room_name){
         console.log("join room");
 
         roomList[room_name + "userList"].push(socket.id);
+        roomList[room_name + "noMaster"].push(socket.id);
         roomList[room_name + socket.id] = {};
         roomList[room_name + socket.id].turn = false;
+        userList[socket.id] = room_name;
         console.log(room_name + "의 유저 리스트 : " + roomList[room_name + "userList"]);
         console.log(room_name + "의 방장: " +roomList[room_name + "master"])
         socket.join(room_name);

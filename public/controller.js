@@ -48,6 +48,13 @@
 
             $scope.betting = function(){
                 if($scope.myTurn){
+                    if($scope.bettingScore > $scope.score){
+                        alert("가지고 있는 점수보다 배팅점수가 큽니다.");
+                        return false;
+                    }else{
+                        $scope.score = $scope.score - $scope.bettingScore
+                    }
+
                    socket.emit("betting",{
                        bettingScore : $scope.bettingScore
                    })
