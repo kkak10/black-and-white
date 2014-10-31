@@ -1,7 +1,8 @@
-A : {{A.score}}<input type="text" pattern="\d*" class="form-control" ng-model="A_minus" ng-change="blackAndWhite_box(A_minus,'A')" />
-<input type="button" class="btn" id="A_btn" ng-click="betting(A,A_minus)" value="배팅" /> 승리 횟수 : {{A.win}}
-<span ng-bind="A_minus"></span> <div class="color_box" ng-class="{black:A.box_black}"></div>
-
+내 점수 : {{score}}<input type="text" pattern="\d*" class="form-control" ng-model="bettingScore" ng-change="blackAndWhite_box(this)" />
+<input type="button" class="btn" id="A_btn" ng-click="betting()" value="배팅" /> 승리 횟수 : {{A.win}}
+<div class="color_box" ng-class="{black:box_black}">숫자 선택중</div>
+<!--
 B : {{B.score}}<input type="text" pattern="\d*" class="form-control" ng-model="B_minus" ng-change="blackAndWhite_box(B_minus,'B')"/>
 <input type="button" class="btn" id="B_btn" ng-click="betting(B,B_minus)" value="배팅" /> 승리 횟수 :{{B.win}}
 <span ng-bind="B_minus"></span> <div class="color_box" ng-class="{black:B.box_black}"></div>
+-->

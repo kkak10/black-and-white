@@ -12,12 +12,20 @@ var io = require('socket.io').listen(server);
 
 io.set('log level',2);
 var roomNum = 0;
+var roomList = {};
+function trunChanger(roomName){
+    for(socketid in  roomList[roomName + "userList"]){
+        console.log(socketid);
+    }
+}
+
 //소켓 서버 이벤트를 연결합니다.
 io.on('connection',function(socket){
     console.log("연결 완료!")
 
     socket.on("access",function(){
         console.log("access");
+        //roomList[socket.id] = socke.id;
         var rooms = io.sockets.adapter.rooms;
         socket.emit("room_update",rooms);
     });
@@ -26,6 +34,11 @@ io.on('connection',function(socket){
         console.log("makeRoom Start!")
         roomNum++;
         var roomName = "room_" + roomNum;
+            roomList[roomName + "userList"] = [];
+            roomList[roomName + "userList"].push(socket.id);
+            roomList[roomName + "master"] = socket.id;
+            roomList[roomName + socket.id] = {};
+            roomList[roomName + socket.id].turn = true;
         socket.join(roomName);
         var rooms = io.sockets.adapter.rooms;
         console.dir("방 목록1 : " + rooms);
@@ -40,17 +53,33 @@ io.on('connection',function(socket){
         //socket.emit("makeRoom",rooms);
     })
 
-    socket.on("gameStart",function(){
+    socket.on("gameStart",function(room_name){
+        console.log("게임시작!")
 
+        for(var idx in roomList[room_name + "userList"]){
+            if(roomList[room_name + "userList"][idx] !== roomList[room_name + "master"]){
+                socket.broadcast.to(roomList[room_name + "userList"][idx]).emit("noTurn",[]);
+            }
+        }
+        socket.broadcast.to(roomList[room_name + "master"]).emit('isTurn',roomList[room_name + "master"]);
+    });
+
+    socket.on("betting",function(data){
+        console.log("배팅 스코어 : " + data.bettingScore);
     })
 
     socket.on("join_room",function(room_name){
         console.log("join room");
-        console.log(room_name)
+
+        roomList[room_name + "userList"].push(socket.id);
+        roomList[room_name + socket.id] = {};
+        roomList[room_name + socket.id].turn = false;
+        console.log(room_name + "의 유저 리스트 : " + roomList[room_name + "userList"]);
+        console.log(room_name + "의 방장: " +roomList[room_name + "master"])
         socket.join(room_name);
         var rooms = io.sockets.adapter.rooms;
         //socket.broadcast.to(room_name).emit('join_room', rooms.room_name)
-        io.sockets.in(room_name).emit('join_room',rooms);
+        io.sockets.in(room_name).emit('join_room',room_name);
     })
 });
 
