@@ -2,6 +2,9 @@
             $scope.spinner = false;
             $scope.makeRoomBtn = true;
             $scope.roomMsg = "";
+            $scope.rivalBetting = null;
+            $scope.winScore = 0;
+
 			$scope.makeRoom = function(){
 				socket.emit("makeRoom","");
 				//console.log(window.socket)
@@ -36,15 +39,41 @@
                 },2000);
             })
 
-            socket.on("isTurn",function(){
+            socket.on("isTurn",function(first){
                 console.log("내턴!");
                 $scope.myTurn = true;
+                if(first === 1){
+                    $scope.msg = "첫번째 순서 입니다. 배팅해주세요."
+                }
+                $scope.$digest();
             })
 
-            socket.on("noTurn",function(){
+            socket.on("noTurn",function(first){
                 console.log("내턴 아니다!");
                 $scope.myTurn = false;
+                if(first === 1){
+
+                    $scope.msg = "상대방의 배팅을 기다리고 있습니다."
+                }
+                $scope.$digest();
             })
+
+            socket.on("getBetting",function(data){
+                console.log(data);
+                $scope.rivalBetting = data;
+                $scope.blackAndWhite_box(data);
+            })
+
+            socket.on("meWin",function(){
+                $scope.msg = "승리하셨습니다. 상대방의 순서입니다.";
+                $scope.winScore++;
+                $scope.$digest();
+            });
+
+            socket.on("meLose",function(){
+                $scope.msg = "패배하셨습니다. 먼저 배팅해주세요.";
+                $scope.$digest();
+            });
 
             $scope.betting = function(){
                 if($scope.myTurn){
@@ -55,9 +84,26 @@
                         $scope.score = $scope.score - $scope.bettingScore
                     }
 
-                   socket.emit("betting",{
-                       bettingScore : $scope.bettingScore
-                   })
+                    if($scope.rivalBetting !== null){
+                        console.log("내점수 : " + $scope.bettingScore)
+                        console.log("상대점수 : " + $scope.rivalBetting)
+                        if($scope.bettingScore * 1 > $scope.rivalBetting * 1){
+                            if($scope.myScore === 5){
+                                alert("승리하셨습니다.");
+                                return ;
+                            }
+                            socket.emit("meWin");
+                        }else{
+                            socket.emit("meLose")
+                        }
+                        $scope.rivalBetting = null;
+                        $scope.bettingScore = null;
+                    }else{
+                        $scope.msg = "배팅하였습니다. 상대방이 맞배팅 할때까지 기다려주세요.";
+                        socket.emit("betting",{
+                            bettingScore : $scope.bettingScore
+                        })
+                    }
                 }else{
                     alert("저의 턴이 아니에요 ㅠ 기다려주세용!");
                     return false;
@@ -68,13 +114,19 @@
                $scope.score = 99;
             }
 
-            $scope.blackAndWhite_box = function(el){
+            $scope.blackAndWhite_box = function(score){
                     //minous_score = $scope.bettingScore.replace(/[^0-9]/g, "");
-                    if($scope.bettingScore > 9){
+                var color = "";
+                if(score <= 9){
                         $scope.box_black = true;
+                        color = "검은색";
                     }else{
                         $scope.box_black = false;
+                        color = "흰색";
                     }
+
+                $scope.msg = "상대방이 배팅했습니다. 상대방의 색은 " +color + "입니다.";
+                $scope.$digest();
             }
 
 

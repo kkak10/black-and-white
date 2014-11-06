@@ -14,21 +14,17 @@ io.set('log level',2);
 var roomNum = 0;
 var roomList = {};
 var userList = {}
-function trunChanger(roomName){
-    for(idx in  roomList[roomName + "userList"]){
-        if(roomList[roomName + roomList[roomName + "userList"][idx]].turn){
-            roomList[roomName + roomList[roomName + "userList"][idx]].turn = false;
-            socket.broadcast.to(roomList[roomName + "userList"][idx]).emit('noTurn',);
-        }else{
-            roomList[roomName + roomList[roomName + "userList"][idx]].turn = true;
-            socket.broadcast.to(roomList[roomName + "userList"][idx]).emit('isTurn',);
-        }
-    }
-}
+var scoreBoard = {};
 
 //소켓 서버 이벤트를 연결합니다.
 io.on('connection',function(socket){
     console.log("연결 완료!")
+
+    function trunChanger(roomName){
+        for(idx in  roomList[roomName + "userList"]) {
+
+        }
+    }
 
     socket.on("access",function(){
         console.log("access");
@@ -66,25 +62,40 @@ io.on('connection',function(socket){
 
         for(var idx in roomList[room_name + "userList"]){
             if(roomList[room_name + "userList"][idx] !== roomList[room_name + "master"]){
-                socket.broadcast.to(roomList[room_name + "userList"][idx]).emit("noTurn",[]);
+                socket.broadcast.to(roomList[room_name + "userList"][idx]).emit("noTurn",1);
             }
         }
-        socket.broadcast.to(roomList[room_name + "master"]).emit('isTurn',roomList[room_name + "master"]);
+        socket.broadcast.to(roomList[room_name + "master"]).emit('isTurn',1);
     });
+
+    socket.on("meWin",function(){
+        socket.emit("meWin");
+        socket.emit("noTurn");
+        socket.broadcast.to(userList[socket.id]).emit('meLose');
+        socket.broadcast.to(userList[socket.id]).emit('isTurn');
+    })
+
+    socket.on("meLose",function(){
+        socket.emit("meLose");
+        socket.emit("isTurn");
+        socket.broadcast.to(userList[socket.id]).emit('meWin');
+        socket.broadcast.to(userList[socket.id]).emit('noTurn');
+    })
 
     socket.on("betting",function(data){
         console.log("배팅 스코어 : " + data.bettingScore);
         var roomName = userList[socket.id];
-        roomList[roomName + socket.id].battingScore = data.bettingScore;
-        trunChanger(roomName);
 
+        socket.emit("noTurn");
+        socket.broadcast.to(roomName).emit("getBetting",data.bettingScore);
+        socket.broadcast.to(roomName).emit("isTurn");
     })
 
     socket.on("join_room",function(room_name){
         console.log("join room");
 
         roomList[room_name + "userList"].push(socket.id);
-        roomList[room_name + "noMaster"].push(socket.id);
+       // roomList[room_name + "noMaster"].push(socket.id);
         roomList[room_name + socket.id] = {};
         roomList[room_name + socket.id].turn = false;
         userList[socket.id] = room_name;
