@@ -64,10 +64,22 @@
                 $scope.blackAndWhite_box(data);
             })
 
+            socket.on("gameLost",function(){
+                $scope.msg = "패배하셨습니다 ㅠ";
+            })
+
+            socket.on("gameWin",function(){
+                $scope.msg = "승리하셨습니다!. 축하드려요~";
+            })
+
             socket.on("meWin",function(){
                 $scope.msg = "승리하셨습니다. 상대방의 순서입니다.";
                 $scope.winScore++;
                 $scope.$digest();
+
+                if($scope.winScore == 5){
+                    socket.emit("gameEnd",[]);
+                }
             });
 
             socket.on("meLose",function(){

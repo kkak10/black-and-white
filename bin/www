@@ -91,6 +91,15 @@ io.on('connection',function(socket){
         socket.broadcast.to(roomName).emit("isTurn");
     })
 
+    socket.on("gameEnd",function(){
+        console.log("game End");
+        console.log("승자는 : " + socket.id);
+        socket.emit("gameWin");
+        socket.emit("noTurn");
+        socket.broadcast.to(userList[socket.id]).emit('noTurn');
+        socket.broadcast.to(userList[socket.id]).emit('gameLost');
+    })
+
     socket.on("join_room",function(room_name){
         console.log("join room");
 
