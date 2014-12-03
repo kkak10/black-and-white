@@ -96,6 +96,7 @@ io.on('connection',function(socket){
         console.log("승자는 : " + socket.id);
         socket.emit("gameWin");
         socket.emit("noTurn");
+
         socket.broadcast.to(userList[socket.id]).emit('noTurn');
         socket.broadcast.to(userList[socket.id]).emit('gameLost');
     })
